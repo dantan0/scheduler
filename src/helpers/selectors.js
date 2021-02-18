@@ -22,3 +22,15 @@ export function getAppointmentsForDay(state, day) {
   }
   return appointments;
 }
+
+// return a new object with the interviewer details inside
+export function getInterview(state, interview) {
+  if (interview === null) {
+    return null;
+  }
+  const interviewerId = interview.interviewer.toString();
+  if (state.interviewers[interviewerId]) {
+    interview.interviewer = state.interviewers[interviewerId];
+  }
+  return interview;
+}
