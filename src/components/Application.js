@@ -16,9 +16,7 @@ export default function Application() {
 
   // define aliasing actions
   const setDay = day => setState({ ...state, day });
-  // const setDays = days => setState(prev => ({ ...prev, days }));
-  // const setAppointments = appointments => setState(prev => ({ ...prev, appointments }));
-
+  
   // useEffect doesn't depend on state (empty dependency list)
   // dont want to make a request every time a component renders
   useEffect(() => {
@@ -27,12 +25,12 @@ export default function Application() {
       Promise.resolve(axios.get("http://localhost:8001/api/appointments")),
       Promise.resolve(axios.get("http://localhost:8001/api/interviewers"))
     ]).then((all) => {
-      console.log("interviewers", all[2].data);
+      const [dayInfo, apppointmentInfo, interviewerInfo] = all;
       setState(prev => ({ 
         ...prev, 
-        days: all[0].data,
-        appointments: all[1].data,
-        interviewers: all[2].data
+        days: dayInfo.data,
+        appointments: apppointmentInfo.data,
+        interviewers: interviewerInfo.data
       }))
     })
   }, []);
