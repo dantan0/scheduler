@@ -4,7 +4,7 @@ import "./Application.scss";
 import DayList from "./DayList";
 import Appointment from './Appointment/index';
 import axios from "axios";
-import { getAppointmentsForDay, getInterview } from '../helpers/selectors';
+import { getAppointmentsForDay, getInterview, getInterviewersForDay } from '../helpers/selectors';
 
 export default function Application() {
   const [state, setState] = useState({
@@ -21,9 +21,9 @@ export default function Application() {
   // dont want to make a request every time a component renders
   useEffect(() => {
     Promise.all([
-      Promise.resolve(axios.get("http://localhost:8001/api/days")),
-      Promise.resolve(axios.get("http://localhost:8001/api/appointments")),
-      Promise.resolve(axios.get("http://localhost:8001/api/interviewers"))
+      Promise.resolve(axios.get("api/days")),
+      Promise.resolve(axios.get("api/appointments")),
+      Promise.resolve(axios.get("api/interviewers"))
     ]).then((all) => {
       const [dayInfo, apppointmentInfo, interviewerInfo] = all;
       setState(prev => ({ 
@@ -35,7 +35,42 @@ export default function Application() {
     })
   }, []);
 
+  const bookInterview = function(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    return axios.put(`api/appointments/${id}`, {
+      interview
+    })
+    .then(() => setState(prev => ({ ...prev, appointments })))
+  };
+
+  const cancelInterview = function(id) {
+    // if (!state.appointments[id]) return;
+
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    return axios.delete(`api/appointments/${id}`)
+    .then(() => setState(prev => ({ ...prev, appointments })))
+  }
+
   const dailyAppointments = getAppointmentsForDay(state, state.day);
+  const dailyInterviewers = getInterviewersForDay(state, state.day);
 
   const schedule = dailyAppointments.map(appointment => {
     const interview = getInterview(state, appointment.interview);
@@ -46,6 +81,9 @@ export default function Application() {
         id={appointment.id}
         time={appointment.time}
         interview={interview}
+        interviewers={dailyInterviewers}
+        bookInterview={bookInterview}
+        cancelInterview={cancelInterview}
       />
     )
   });
