@@ -62,6 +62,25 @@ export default function useApplicationData() {
   // define aliasing actions
   const setDay = day => dispatch({ type: SET_DAY, day });
 
+  const updateSpots = function(day, days, appointments) {
+    // find day object
+    const dayObj = days.find(item => item.name === day);
+
+    // iterate its appointment array
+    const appointmentIds = dayObj.appointments;
+    let spots = 0;
+    for (const id of appointmentIds) {
+      if (appointments[id].interview === null) {
+        spots++;
+      }
+    }
+
+    // update the spots in the dayObj <- days; at this point, nothing is changed
+    // here dayObj is mutated
+    dayObj.spots = spots;
+    return [...days];
+  }
+
   const bookInterview = function(id, interview) {
     const appointment = {
       ...state.appointments[id],
@@ -73,21 +92,16 @@ export default function useApplicationData() {
       [id]: appointment
     };
 
-    const newDays = [...state.days];
-    for (const day of newDays) {
-      if (day.name === state.day) {
-        day.spots -= 1;
-        break;
-      }
-    }
-
     return axios.put(`api/appointments/${id}`, { interview })
-    .then(() => dispatch({
-      type: SET_INTERVIEW, 
-      appointments: appointments, 
-      days: newDays 
-    }))
-  };
+    .then(() => {
+      const days = updateSpots(state.day, state.days, appointments);
+      dispatch({
+        type: SET_INTERVIEW, 
+        appointments,
+        days
+      })
+    });
+  }
 
   const cancelInterview = function(id) {
     const appointment = {
@@ -100,20 +114,15 @@ export default function useApplicationData() {
       [id]: appointment
     };
 
-    const newDays = [...state.days];
-    for (const day of newDays) {
-      if (day.name === state.day) {
-        day.spots += 1;
-        break;
-      }
-    }
-
     return axios.delete(`api/appointments/${id}`)
-    .then(() => dispatch({
-      type: SET_INTERVIEW,
-      appointments: appointments,
-      days: newDays
-    }))
+    .then(() => {
+      const days = updateSpots(state.day, state.days, appointments);
+      dispatch({
+        type: SET_INTERVIEW, 
+        appointments,
+        days
+      })
+    });
   }
 
   return {
