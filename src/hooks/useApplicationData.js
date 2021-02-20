@@ -41,15 +41,21 @@ export default function useApplicationData() {
       [id]: appointment
     };
 
+    const newDays = [...state.days];
+    for (const day of newDays) {
+      if (day.name === state.day) {
+        day.spots -= 1;
+        break;
+      }
+    }
+
     return axios.put(`api/appointments/${id}`, {
       interview
     })
-    .then(() => setState(prev => ({ ...prev, appointments })))
+    .then(() => setState(prev => ({ ...prev, appointments, newDays })))
   };
 
   const cancelInterview = function(id) {
-    // if (!state.appointments[id]) return;
-
     const appointment = {
       ...state.appointments[id],
       interview: null
@@ -60,8 +66,16 @@ export default function useApplicationData() {
       [id]: appointment
     };
 
+    const newDays = [...state.days];
+    for (const day of newDays) {
+      if (day.name === state.day) {
+        day.spots += 1;
+        break;
+      }
+    }
+
     return axios.delete(`api/appointments/${id}`)
-    .then(() => setState(prev => ({ ...prev, appointments })))
+    .then(() => setState(prev => ({ ...prev, appointments, newDays })))
   }
 
   return {
