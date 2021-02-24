@@ -4,6 +4,8 @@ import { render, cleanup, waitForElement, fireEvent, getByText, getAllByTestId, 
 
 import Application from "../Application";
 
+import axios from 'axios';
+
 afterEach(cleanup);
 
 describe("Application", () => {
@@ -42,7 +44,85 @@ describe("Application", () => {
     const day = getAllByTestId(container, "day").find(day => 
       queryByText(day, "Monday")
     );
-    
+
     expect(getByText(day, "no spots remaining")).toBeInTheDocument();
   });
-})
+
+  it("loads data, cancels an interview, and increases the spots remaining for the first day by 1", async () => {
+    // 1. render the application
+    const { container, debug } = render(<Application />);
+
+    // 2. wait until the text "Archie Cohen" is displayed
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+
+    // 3. click on the cancel image of his appointment (belonging to the show component)
+    const appointment = getAllByTestId(container, "appointment").find(appointment => 
+      queryByText(appointment, "Archie Cohen")
+    );
+    fireEvent.click(getByAltText(appointment, "Delete"));
+
+    // 4. check that the confirmation message is shown
+    expect(getByText(appointment, "Are you sure you would like to delete?")).toBeInTheDocument();
+    
+    // 5. click on the confirm button of the confirm component
+    fireEvent.click(queryByText(appointment, "Confirm"));
+
+    // 6. check that the element with the text deleting is displayed
+    expect(getByText(appointment, "Deleting")).toBeInTheDocument();
+
+    // 7. wait until the element with the "Add" button is displayed
+    await waitForElement(() => getByAltText(appointment, "Add"));
+
+    // 6. check that the number of remaining spots has increased by 1
+    const day = getAllByTestId(container, "day").find(day => 
+      queryByText(day, "Monday")
+    );
+
+    expect(getByText(day, "2 spots remaining")).toBeInTheDocument();
+  });
+
+  it("loads data, edits an interview, and keeps the spots remaining for Monday the same", async () => {
+    // 1. render the application
+    const { container, debug } = render(<Application />);
+
+    // 2. wait until the text "Archie Cohen is displayed"
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+
+    // 3. click on the edit button
+    const appointment = getAllByTestId(container, "appointment").find(appointment => 
+      queryByText(appointment, "Archie Cohen")
+    );
+    fireEvent.click(getByAltText(appointment, "Edit"));
+
+    // 4. now in the create mode: change the input field of the form to a new name as well as the interviewer
+    fireEvent.change(getByPlaceholderText(appointment, /Enter Student Name/i), {
+      target: { value: "Harry Dough" }
+    });
+    fireEvent.click(getByAltText(appointment, "Tori Malcolm"));
+
+    // 5. click on the save button of the form
+    fireEvent.click(getByText(appointment, "Save"));
+
+    // 6. check the saving message
+    expect(getByText(appointment, "Saving")).toBeInTheDocument();
+
+    // 7. wait until the element with the new name is displayed
+    await waitForElement(() => getByText(appointment, "Harry Dough"));
+
+    // 8. check that the number of remaining spots has increased by 1
+    const day = getAllByTestId(container, "day").find(day => 
+      queryByText(day, "Monday")
+    );
+
+    // 9. confirm that we have the same number of spots as before (1)
+    expect(getByText(day, "1 spot remaining")).toBeInTheDocument();
+  });
+
+  it("shows the save error when failing to save an appointment", () => {
+    axios.put.mockRejectedValueOnce();
+  });
+
+  it("shows the delete error when failing to delete an appointment", () => {
+    axios.delete.mockRejectedValueOnce();
+  });
+});

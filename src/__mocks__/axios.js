@@ -75,7 +75,13 @@ export default {
     }
     return Promise.resolve(urlPromises[url]);
   }),
-  put: jest.fn((url) => {
+  put: jest.fn(url => {
+    return Promise.resolve({
+      status: 204,
+      statusText: "No Content"
+    })
+  }),
+  delete: jest.fn(url => {
     return Promise.resolve({
       status: 204,
       statusText: "No Content"
