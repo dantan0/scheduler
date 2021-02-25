@@ -1,5 +1,8 @@
 # Interview Scheduler
-An app built using React and tested with Jest and Cypress
+A scheduler app built using React and tested with Jest and Cypress
+
+## Demo
+!["Add an appointment"](https://github.com/dantan123/scheduler/blob/master/docs/scheduler.png?raw=true)
 
 ## Setup
 
