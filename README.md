@@ -1,4 +1,5 @@
 # Interview Scheduler
+An app built using React and tested with Jest and Cypress
 
 ## Setup
 
