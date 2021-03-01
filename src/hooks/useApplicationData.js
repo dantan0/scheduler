@@ -76,13 +76,13 @@ export default function useApplicationData() {
   useEffect(() => {
     
     Promise.all([
-      Promise.resolve(axios.get("/api/days")),
-      Promise.resolve(axios.get("/api/appointments")),
-      Promise.resolve(axios.get("/api/interviewers"))
+      Promise.resolve(axios.get("api/days")),
+      Promise.resolve(axios.get("api/appointments")),
+      Promise.resolve(axios.get("api/interviewers"))
     ])
     .then((all) => {
       const [dayInfo, apppointmentInfo, interviewerInfo] = all;
-      console.log(all);
+      // console.log('this is all', all);
       dispatch({
         type: SET_APPLICATION_DATA,
         days: dayInfo.data,
@@ -90,14 +90,14 @@ export default function useApplicationData() {
         interviewers: interviewerInfo.data
       })
     })
-    
+
     // create websocket connection with the client
     const ws = new WebSocket(`${process.env.REACT_APP_WEBSOCKET_URL}`);
     ws.onopen = function(event) {
       ws.send('ping');
     };
   
-    console.log("***CREATED ONOPEN***");
+    // console.log("***CREATED ONOPEN***");
   
     ws.onmessage = function(event) {
       const msg = JSON.parse(event.data);
@@ -107,7 +107,7 @@ export default function useApplicationData() {
       }
     };
   
-    console.log("***CREATED ONMESSAGE***");
+    // console.log("***CREATED ONMESSAGE***");
   }, []);
   
   // define aliasing actions
