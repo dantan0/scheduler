@@ -28,33 +28,35 @@ export default function useApplicationData() {
   const reducer = function(state, action) {
     switch (action.type) {
       case SET_DAY:
-        return {
-          ...state,
-          day: action.day
-        }
-      
+        const { day } = action;
+        return { ...state, day };
+
       case SET_APPLICATION_DATA:
-        return {
-          ...state,
-          days: action.days, 
-          appointments: action.appointments, 
-          interviewers: action.interviewers
-        }
+        const { days, appointments, interviewers } = action;
+        return { ...state, days, appointments, interviewers };
 
       case SET_INTERVIEW:
         const { id, interview } = action;
+
         const appointment = {
           ...state.appointments[id],
           interview: interview && { ...interview }
         };
     
-        const appointments = {
+        const newAppointments = {
           ...state.appointments,
           [id]: appointment
         };
 
-        const days = updateSpots(state.day, state.days, appointments);
-        return { ...state, appointments, days };
+        // update spots work for multiple clients only when both clients are on
+        // the same say because of state.day
+        const newDays = updateSpots(state.day, state.days, newAppointments);
+        console.log('called with newDays', newDays);
+        return {
+          ...state, 
+          appointments: newAppointments, 
+          days: newDays
+        };
       
       default:
         throw new Error(
@@ -85,7 +87,7 @@ export default function useApplicationData() {
       const msg = JSON.parse(event.data);
       if (msg.type === SET_INTERVIEW) {
         const { type, id, interview } = msg;
-        dispatch( { type, id, interview } );
+        dispatch({ type, id, interview });
       }
     };
   
@@ -111,25 +113,11 @@ export default function useApplicationData() {
   const setDay = day => dispatch({ type: SET_DAY, day });
 
   const bookInterview = function(id, interview) {
-    return axios.put(`api/appointments/${id}`, { interview })
-    .then(() => {
-      dispatch({
-        type: SET_INTERVIEW, 
-        id,
-        interview
-      })
-    });
+    return axios.put(`api/appointments/${id}`, { interview });
   }
 
   const cancelInterview = function(id) {
-    return axios.delete(`api/appointments/${id}`)
-    .then(() => {
-      dispatch({
-        type: SET_INTERVIEW,
-        id,
-        interview: null
-      })
-    });
+    return axios.delete(`api/appointments/${id}`);
   }
 
   return {
