@@ -74,7 +74,6 @@ export default function useApplicationData() {
   // useEffect doesn't depend on state (empty dependency list)
   // dont want to make a request every time a component renders
   useEffect(() => {
-    
     Promise.all([
       Promise.resolve(axios.get("api/days")),
       Promise.resolve(axios.get("api/appointments")),
