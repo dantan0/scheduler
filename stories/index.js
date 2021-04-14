@@ -131,7 +131,7 @@ storiesOf("InterviewerList", module)
     <InterviewerList
       interviewers={interviewers}
       value={3}
-      onChange={action("onChange")}
+      setInterviewer={action("setInterviewer")}
     />
   ))
 
@@ -140,7 +140,7 @@ storiesOf("Appointment", module)
     backgrounds: [{ name: "white", value: "#fff", default: true }]
   })
   .add("Appointment", () => <Appointment />)
-  .add("Appointment", () => <Appointment time="12pm" />)
+  .add("Appointment with Time", () => <Appointment time="12pm" />)
   .add("Header", () => <Header time="12pm"/>)
   .add("Empty", () => <Empty onAdd={action("onAdd")}/>)
   .add("Show", () => (

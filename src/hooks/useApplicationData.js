@@ -51,7 +51,6 @@ export default function useApplicationData() {
         // update spots work for multiple clients only when both clients are on
         // the same say because of state.day
         const newDays = updateSpots(state.day, state.days, newAppointments);
-        console.log('called with newDays', newDays);
         return {
           ...state, 
           appointments: newAppointments, 
@@ -75,13 +74,29 @@ export default function useApplicationData() {
   // useEffect doesn't depend on state (empty dependency list)
   // dont want to make a request every time a component renders
   useEffect(() => {
+    Promise.all([
+      Promise.resolve(axios.get("api/days")),
+      Promise.resolve(axios.get("api/appointments")),
+      Promise.resolve(axios.get("api/interviewers"))
+    ])
+    .then((all) => {
+      const [dayInfo, apppointmentInfo, interviewerInfo] = all;
+      // console.log('this is all', all);
+      dispatch({
+        type: SET_APPLICATION_DATA,
+        days: dayInfo.data,
+        appointments: apppointmentInfo.data,
+        interviewers: interviewerInfo.data
+      })
+    })
+
     // create websocket connection with the client
     const ws = new WebSocket(`${process.env.REACT_APP_WEBSOCKET_URL}`);
     ws.onopen = function(event) {
       ws.send('ping');
     };
   
-    console.log("***CREATED ONOPEN***");
+    // console.log("***CREATED ONOPEN***");
   
     ws.onmessage = function(event) {
       const msg = JSON.parse(event.data);
@@ -91,22 +106,7 @@ export default function useApplicationData() {
       }
     };
   
-    console.log("***CREATED ONMESSAGE***");
-
-    Promise.all([
-      Promise.resolve(axios.get("/api/days")),
-      Promise.resolve(axios.get("/api/appointments")),
-      Promise.resolve(axios.get("/api/interviewers"))
-    ])
-    .then((all) => {
-      const [dayInfo, apppointmentInfo, interviewerInfo] = all;
-      dispatch({
-        type: SET_APPLICATION_DATA,
-        days: dayInfo.data,
-        appointments: apppointmentInfo.data,
-        interviewers: interviewerInfo.data
-      })
-    })
+    // console.log("***CREATED ONMESSAGE***");
   }, []);
   
   // define aliasing actions

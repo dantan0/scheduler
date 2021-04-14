@@ -19,7 +19,7 @@ describe("Application", () => {
   });
   
   it("loads data, books an interview, and reduces the spots remaining for the first day by 1", async () => {
-    const { container } = render(<Application />);
+    const { container, debug } = render(<Application />);
     await waitForElement(() => getByText(container, "Archie Cohen"));
 
     const appointments = getAllByTestId(container, "appointment");
@@ -30,7 +30,7 @@ describe("Application", () => {
 
     // enter student name in the form and click the interview list item
     fireEvent.change(getByPlaceholderText(appointment, /Enter Student Name/i), {
-      target: { value: "Yeast West" }
+      target: { value: "Lydia Miller-Jones" }
     });
     fireEvent.click(getByAltText(appointment, "Sylvia Palmer")); // image alt
 
@@ -39,13 +39,14 @@ describe("Application", () => {
 
     expect(getByText(appointment, "Saving")).toBeInTheDocument();
 
-    await waitForElement(() => getByText(appointment, "Yeast West"));
-
+    await waitForElement(() => getByText(appointment, "Lydia Miller-Jones"));
+    
     const day = getAllByTestId(container, "day").find(day => 
       queryByText(day, "Monday")
     );
-
+    
     expect(getByText(day, "no spots remaining")).toBeInTheDocument();
+    debug();
   });
 
   it("loads data, cancels an interview, and increases the spots remaining for the first day by 1", async () => {
