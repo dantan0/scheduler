@@ -13,6 +13,7 @@ export default function Appointment(props) {
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
+  const EDIT = "EDIT";
   const SAVE = "SAVE";
   const DELETE = "DELETE";
   const CONFIRM = "CONFIRM";
@@ -35,6 +36,7 @@ export default function Appointment(props) {
 
   const save = function(name, interviewer) {
     if (name.length === 0 || interviewer === null) return;
+    // the structure of an interview
     const interview = {
       student: name,
       interviewer
@@ -45,24 +47,12 @@ export default function Appointment(props) {
     .catch(() => transition(ERROR_SAVE, true));
   };
 
-  const showRemove = function() {
-    transition(CONFIRM);
-  };
-
-  const showEdit = function() {
-    transition(CREATE);
-  };
-
   const confirmRemove = function() {
     transition(DELETE);
     props.cancelInterview(props.id)
     .then(() => transition(EMPTY))
     .catch(() => transition(ERROR_DELETE, true));
-  }
-
-  const confirmCancel = function() {
-    transition(SHOW);
-  }
+  };
 
   return (
     <article className="appointment" data-testid="appointment">
@@ -72,8 +62,16 @@ export default function Appointment(props) {
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer.name}
-          onDelete={showRemove}
-          onEdit={showEdit}
+          onDelete={() => transition(CONFIRM)}
+          onEdit={() => transition(EDIT)}
+        />
+      )}
+      {mode === EDIT && (
+        <Form 
+          interviewer={props.interview.interviewer.name}
+          interviewers={props.interviewers}
+          onCancel={back}
+          onSave={save}
         />
       )}
       {mode === CREATE && (
@@ -88,20 +86,20 @@ export default function Appointment(props) {
       {mode === CONFIRM && (
         <Confirm
           onConfirm={confirmRemove}
-          onCancel={confirmCancel}
+          onCancel={back}
           message="Are you sure you would like to delete?"
         />
       )}
       {mode === ERROR_SAVE && (
         <Error
           message="Saving error occured"
-          close={back}
+          onClose={back}
         />
       )}
       {mode === ERROR_DELETE && (
         <Error
           message="Deleting error occured"
-          close={back}
+          onClose={back}
         />
       )}
     </article>

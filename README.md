@@ -10,6 +10,9 @@ A scheduler app built using React and tested with Jest and Cypress
 
 Install dependencies with `npm install`.
 
+## Running Scheduler API Server
+Fork and run instructions from https://github.com/lighthouse-labs/scheduler-api
+
 ## Running Webpack Development Server
 
 ```sh
