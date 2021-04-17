@@ -16,8 +16,8 @@ export default function useVisualMode(initial) {
 
   const back = function() {
     if (history.length <= 1) return;
-    const newHistory = history.slice(0, -1);
-    setMode(...newHistory.slice(-1));
+    const newHistory = history.slice(0, -1); // from the first to the second last
+    setMode(...newHistory.slice(-1)); // extract the last element
     setHistory(newHistory);
   };
 

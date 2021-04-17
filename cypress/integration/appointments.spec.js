@@ -21,7 +21,7 @@ describe("Appointments", () => {
     cy.get("[alt='Tori Malcolm']").click();
     cy.contains("Save").click();
     cy.contains(".appointment__card--show", "Daniel Moss");
-  })
+  });
 
   it("should cancel an interview", () => {
     cy.contains(".appointment__card--show", "Archie Cohen");

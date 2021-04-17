@@ -41,7 +41,7 @@ const state = {
       name: "Tori Malcolm",
       avatar: "https://i.imgur.com/Nmx0Qxo.png"
     },
-    "3": { 
+    "3": {
       id: 3, 
       name: "Mildred Nazir", 
       avatar: "https://i.imgur.com/T2WwVfS.png" 
@@ -51,7 +51,7 @@ const state = {
       name: "Cohana Roy", 
       avatar: "https://i.imgur.com/FK8V841.jpg" 
     },
-    "5": { 
+    "5": {
       id: 5, 
       name: "Sven Jones", 
       avatar: "https://i.imgur.com/twYrpay.jpg" 
