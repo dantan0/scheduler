@@ -7,6 +7,8 @@ export default function Form(props) {
   const [error, setError] = useState("");
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
 
+  console.log('interviewer from form', interviewer);
+
   const reset = () => {
     setName("");
     setInterviewer(null);
@@ -24,10 +26,10 @@ export default function Form(props) {
     }
 
     setError("");
-    props.onSave(name, interviewer);
+    console.log('about to save this interviewer', name, interviewer);
+    props.onSave(name, interviewer); // interviewer here is the interviwer id
   };
 
-  // console.log("form", interviewer);
   return (
     <main className="appointment__card appointment__card--create">
       <section className="appointment__card-left">
