@@ -6,7 +6,7 @@ export function getAppointmentsForDay(state, day) {
       appointmentIds = dayInfo.appointments;
       break;
     }
-  };
+  }
 
   // if the day is not found, return an empty array
   if (!appointmentIds) {
