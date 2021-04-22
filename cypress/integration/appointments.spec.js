@@ -15,7 +15,7 @@ describe("Appointments", () => {
   });
 
   it("should edit an interview", () => {
-    cy.contains(".appointment__card--show", "Archie Cohen")
+    cy.contains(".appointment__card--show", "Archie Cohen");
     cy.get("[alt=Edit]").click({ force: true });
     cy.get("[data-testid=student-name-input]").clear().type("Daniel Moss");
     cy.get("[alt='Tori Malcolm']").click();

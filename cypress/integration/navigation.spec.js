@@ -9,4 +9,4 @@ describe("Navigation", () => {
       .click()
       .should("have.class", "day-list__item--selected");
   });
-})
+});

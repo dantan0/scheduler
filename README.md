@@ -1,7 +1,9 @@
 # Interview Scheduler
+
 A scheduler app built using React and tested with Jest and Cypress
 
 ## Demo
+
 !["create an appointment"](https://github.com/dantan123/scheduler/blob/master/docs/create%20appointment.png?raw=true)
 
 !["Delete an appointment"](https://github.com/dantan123/scheduler/blob/master/docs/delete%20appointment.png?raw=true)
@@ -11,6 +13,7 @@ A scheduler app built using React and tested with Jest and Cypress
 Install dependencies with `npm install`.
 
 ## Running Scheduler API Server
+
 Fork and run instructions from https://github.com/lighthouse-labs/scheduler-api
 
 ## Running Webpack Development Server
